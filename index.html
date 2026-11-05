@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forever in the Stars - A Whisper Memory Keepsake</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d140c;
+            color: #f3f4f6;
+            overflow-x: hidden;
+            user-select: none;
+        }
+        .font-serif-custom {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        /* Custom Canvas Positioning */
+        #star-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: auto;
+        }
+
+        /* Glassmorphism Styles in Earthy Olive Palette */
+        .glass-panel {
+            background: rgba(22, 33, 20, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(138, 171, 116, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-card {
+            background: rgba(35, 51, 31, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(162, 196, 138, 0.2);
+        }
+
+        /* Pulsing Glow Animation */
+        @keyframes subtlePulse {
+            0%, 100% { opacity: 0.35; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.06); }
+        }
+
+        .ambient-glow {
+            animation: subtlePulse 8s ease-in-out infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(22, 33, 20, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(180, 160, 90, 0.35);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 175, 55, 0.6);
+        }
+    </style>
+</head>
+<body class="relative min-h-screen flex flex-col justify-between overflow-hidden text-slate-200">
+
+    <!-- Ambient Canvas Background -->
+    <canvas id="star-canvas"></canvas>
+
+    <!-- Subtle Olive & Golden Ambient Gradients overlay -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-950/40 rounded-full blur-3xl ambient-glow"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-amber-950/30 rounded-full blur-3xl ambient-glow" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <header class="relative z-10 w-full p-6 flex justify-between items-center max-w-7xl mx-auto">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-full bg-olive-800/20 border border-emerald-500/30 flex items-center justify-center text-amber-300">
+                <!-- SVG Tulip Icon -->
+                <svg class="w-5 h-5 text-amber-300 fill-amber-300/20" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path d="M12 2C9.5 4.5 8 8 8 11c0 3 2 5 4 5s4-2 4-5c0-3-1.5-6.5-4-9z" />
+                    <path d="M12 16v6M12 22c-2-2-4-3-6-3M12 22c2-2 4-3 6-3" />
+                    <path d="M7 6c-2 2.5-3 5-3 7 0 2.5 1.5 4.5 3 5" />
+                    <path d="M17 6c2 2.5 3 5 3 7 0 2.5-1.5 4.5-3 5" />
+                </svg>
+            </div>
+            <div>
+                <h1 class="font-serif-custom text-xl tracking-wide text-emerald-100 font-light">Always Beside You, Likkle Poop</h1>
+                <p class="text-xs text-emerald-300/60 font-light flex items-center gap-1.5">
+                    <span>A sanctuary of quiet memories</span>
+                    <span class="inline-block w-1 h-1 rounded-full bg-emerald-400"></span>
+                    <span>Olive & Tulips</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Ambient Sound Controls & Journal Trigger -->
+        <div class="flex items-center space-x-2 sm:space-x-4">
+            <!-- Audio Toggle Button -->
+            <button id="sound-btn" onclick="toggleAudioMenu()" class="glass-panel px-3 py-2 rounded-full text-xs font-light tracking-wider hover:bg-emerald-950/60 transition-all flex items-center space-x-2 border border-emerald-700/40">
+                <i data-lucide="volume-2" id="sound-icon" class="w-4 h-4 text-emerald-200"></i>
+                <span class="hidden sm:inline text-emerald-200" id="sound-text">Atmosphere</span>
+            </button>
+
+            <!-- Write Back Journal Toggle -->
+            <button onclick="toggleJournal()" class="glass-panel px-3.5 py-2 rounded-full text-xs font-light tracking-wider hover:bg-emerald-900/40 transition-all flex items-center space-x-2 border border-amber-400/30 text-amber-200 hover:border-amber-400/60 shadow-lg shadow-amber-950/20">
+                <i data-lucide="feather" class="w-4 h-4 text-amber-300"></i>
+                <span class="hidden sm:inline">Write Back</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Audio Settings Popover Menu -->
+    <div id="audio-menu" class="hidden fixed top-20 right-6 z-30 glass-panel p-4 rounded-2xl w-64 border border-emerald-700/50 shadow-2xl transition-all duration-300">
+        <div class="text-xs font-medium text-amber-200/90 mb-3 flex items-center justify-between">
+            <span>Ambient Sounds</span>
+            <i data-lucide="music" class="w-3.5 h-3.5"></i>
+        </div>
+        <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-emerald-200/90 flex items-center gap-2"><i data-lucide="cloud-rain" class="w-3.5 h-3.5 text-emerald-300"></i> Soft Rain</span>
+                <input type="range" id="rain-vol" min="0" max="1" step="0.01" value="0" oninput="updateVolume('rain', this.value)" class="w-24 accent-amber-400">
+            </div>
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-emerald-200/90 flex items-center gap-2"><i data-lucide="wind" class="w-3.5 h-3.5 text-emerald-300"></i> Night Wind</span>
+                <input type="range" id="wind-vol" min="0" max="1" step="0.01" value="0" oninput="updateVolume('wind', this.value)" class="w-24 accent-amber-400">
+            </div>
+            <div class="flex items-center justify-between text-xs">
+                <span class="text-emerald-200/90 flex items-center gap-2"><i data-lucide="bell" class="w-3.5 h-3.5 text-amber-300"></i> Celestial Chimes</span>
+                <input type="range" id="chime-vol" min="0" max="1" step="0.01" value="0" oninput="updateVolume('chime', this.value)" class="w-24 accent-amber-400">
+            </div>
+        </div>
+        <p class="text-[10px] text-emerald-400/60 mt-3 text-center italic">Synthesized gently in real time</p>
+    </div>
+
+    <!-- Main Interactive Star Field Prompt Center Overlay -->
+    <main class="relative z-10 my-auto text-center px-4 pointer-events-none">
+        <div class="max-w-xl mx-auto space-y-4">
+            <p class="text-xs uppercase tracking-widest text-amber-300/80 font-light flex items-center justify-center gap-2">
+                <span class="w-6 h-px bg-amber-300/40"></span>
+                <span>Songbirds & Constellations</span>
+                <span class="w-6 h-px bg-amber-300/40"></span>
+            </p>
+            <h2 class="font-serif-custom text-3xl sm:text-4xl text-emerald-50 font-light leading-relaxed">
+                Reach out to a soaring bird or star to hear his voice.
+            </h2>
+            <div class="pt-2 pointer-events-auto">
+                <button onclick="triggerComfortMessage()" class="glass-panel px-6 py-3 rounded-full text-sm font-light text-amber-200 border border-amber-400/40 hover:border-amber-300 hover:bg-emerald-900/40 transition-all duration-500 shadow-xl shadow-emerald-950/40 hover:scale-105 active:scale-95 flex items-center space-x-2.5 mx-auto">
+                    <i data-lucide="heart" class="w-4 h-4 text-amber-300"></i>
+                    <span>"I need to hear from you"</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation Bar & Constellation Legend -->
+    <footer class="relative z-10 w-full p-6 max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs text-emerald-300/60 gap-4">
+        <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+            <span class="font-light">10 Memory Stars & Songbirds shining forever</span>
+        </div>
+        <div class="text-center sm:text-right font-light text-emerald-400/50 text-[11px]">
+            Created with love for your quietest moments
+        </div>
+    </footer>
+
+    <!-- MESSAGE MODAL / POPUP WITH ELEGANT TULIP EMBLEMS -->
+    <div id="message-modal" class="fixed inset-0 z-40 hidden flex items-center justify-center p-4 bg-black/75 backdrop-blur-md transition-opacity duration-500 opacity-0">
+        <div class="glass-panel relative w-full max-w-2xl rounded-3xl p-6 sm:p-10 border border-emerald-600/40 shadow-2xl overflow-hidden transform transition-all duration-500 scale-95" id="modal-card">
+            
+            <!-- Glowing Background Accent inside modal -->
+            <div class="absolute -top-24 -right-24 w-60 h-60 bg-emerald-700/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-60 h-60 bg-amber-600/15 rounded-full blur-2xl pointer-events-none"></div>
+
+            <!-- Tulip Silhouette Accent Corner -->
+            <div class="absolute top-4 left-6 opacity-20 pointer-events-none text-emerald-300">
+                <svg class="w-12 h-12" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C9.5 4.5 8 8 8 11c0 3 2 5 4 5s4-2 4-5c0-3-1.5-6.5-4-9z" />
+                    <path d="M12 16v6M12 22c-2-2-4-3-6-3M12 22c2-2 4-3 6-3" />
+                </svg>
+            </div>
+
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-emerald-300/70 hover:text-emerald-100 transition-colors p-2 rounded-full hover:bg-emerald-900/40">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Star Category / Title Badge -->
+            <div class="flex items-center space-x-2 text-xs text-amber-300/90 uppercase tracking-widest mb-4 mt-2">
+                <i data-lucide="star" class="w-3.5 h-3.5 fill-amber-400/30"></i>
+                <span id="modal-category">Memory Star</span>
+            </div>
+
+            <!-- Primary Message Content Container -->
+            <div class="min-h-[140px] my-6 flex items-center">
+                <p id="modal-text" class="font-serif-custom text-2xl sm:text-3xl text-emerald-50 leading-relaxed font-light italic">
+                    <!-- Typewriter output goes here -->
+                </p>
+            </div>
+
+            <!-- Divider Line -->
+            <div class="w-full h-px bg-gradient-to-r from-transparent via-emerald-700/50 to-transparent my-6"></div>
+
+            <!-- Loving Support Note from Partner -->
+            <div class="flex items-start space-x-3 text-emerald-200/80 text-sm italic font-light">
+                <i data-lucide="quote" class="w-4 h-4 text-amber-300/70 shrink-0 mt-1"></i>
+                <p id="modal-partner-note" class="text-emerald-100/90">
+                    <!-- Partner note goes here -->
+                </p>
+            </div>
+
+            <!-- Footer Action inside Modal -->
+            <div class="mt-8 flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2 rounded-full text-xs font-light text-emerald-200 glass-card hover:bg-emerald-800/40 transition-all border border-emerald-600/40">
+                    Keep Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WRITE BACK JOURNAL MODAL -->
+    <div id="journal-modal" class="fixed inset-0 z-40 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300 opacity-0">
+        <div class="glass-panel relative w-full max-w-xl rounded-3xl p-6 sm:p-8 border border-emerald-600/40 shadow-2xl flex flex-col max-h-[85vh]">
+            
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex items-center space-x-2.5">
+                    <i data-lucide="feather" class="w-5 h-5 text-amber-300"></i>
+                    <h3 class="font-serif-custom text-2xl text-emerald-100">Letters to Him</h3>
+                </div>
+                <button onclick="toggleJournal()" class="text-emerald-300/70 hover:text-emerald-100 p-1">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-emerald-300/70 mb-3 font-light">
+                Write what's on your heart or tap a thought below to hear his exact words back to you.
+            </p>
+
+            <!-- Quick Phrase Prompts / Suggestion Chips -->
+            <div class="mb-3 flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1 pb-1">
+                <button onclick="selectQuickPhrase('Are you safe?')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">Are you safe?</button>
+                <button onclick="selectQuickPhrase('Someone is bothering me')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">Someone is bothering me</button>
+                <button onclick="selectQuickPhrase('I need strength today')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">I need strength today</button>
+                <button onclick="selectQuickPhrase('I am having a headache in foreign')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">I'm having a headache in foreign</button>
+                <button onclick="selectQuickPhrase('I love you bro')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">I love you bro</button>
+                <button onclick="selectQuickPhrase('I don\'t feel pretty today')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">I don't feel pretty today</button>
+                <button onclick="selectQuickPhrase('Bye for now')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">Bye for now</button>
+                <button onclick="selectQuickPhrase('I am worried about being safe')" class="text-[11px] px-2.5 py-1 rounded-full glass-card hover:bg-amber-500/20 text-amber-200/90 border border-amber-400/30 transition-all">I'm worried about being safe</button>
+            </div>
+
+            <!-- Conversation Log -->
+            <div id="journal-entries" class="flex-1 overflow-y-auto space-y-4 mb-3 pr-1 text-sm font-light">
+                <!-- Dynamic Conversation Log loads here -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="space-y-3 pt-2 border-t border-emerald-800/40">
+                <textarea id="journal-input" rows="2" placeholder="Tell him what's on your heart, likkle poop..." class="w-full bg-emerald-950/60 text-emerald-100 placeholder-emerald-400/50 rounded-2xl p-3 text-sm border border-emerald-700/50 focus:outline-none focus:border-amber-400/50 resize-none font-light"></textarea>
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] text-emerald-400/50">Saved privately on this device</span>
+                    <button id="send-journal-btn" onclick="saveJournalEntry()" class="px-5 py-2 rounded-full text-xs font-light text-slate-950 bg-amber-300 hover:bg-amber-200 transition-all font-medium flex items-center space-x-1.5 shadow-lg shadow-amber-300/10">
+                        <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                        <span>Send to the Stars</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ===================================================================
+           1. MESSAGES DATA (EXACT QUOTES FROM HER BROTHER)
+           =================================================================== */
+        const MEMORY_MESSAGES = [
+            {
+                id: 1,
+                theme: "His Protection",
+                text: "Make sure you okay enuh cause you know me we shell dung e place Fi u",
+                partnerNote: "He would protect you against anything in this world. Never forget how fiercely he stands by you."
+            },
+            {
+                id: 2,
+                theme: "His Faith",
+                text: "You'll be fine you can do all things through Christ who strengthens you",
+                partnerNote: "His faith in you never wavered for a single second."
+            },
+            {
+                id: 3,
+                theme: "Safety & Warmth",
+                text: "You'll be okay just make sure your safe",
+                partnerNote: "Your safety and peace were always his number one priority."
+            },
+            {
+                id: 4,
+                theme: "His Sister",
+                text: "Me pretty sister",
+                partnerNote: "He saw your beauty and light every single day."
+            },
+            {
+                id: 5,
+                theme: "His Endearment",
+                text: "Alright me likkle poop",
+                partnerNote: "That special name was meant just for you and held all his love."
+            },
+            {
+                id: 6,
+                theme: "Teasing & Care",
+                text: "Girl your in Foriengg what kind of headache you feeling in forieghn",
+                partnerNote: "Even when teasing you about being abroad, he was always checking on you."
+            },
+            {
+                id: 7,
+                theme: "Pure Gratitude",
+                text: "Thanks love u lil sis",
+                partnerNote: "He loved you with all his heart, always proud to call you his little sister."
+            },
+            {
+                id: 8,
+                theme: "His Comfort",
+                text: "Yeah mn me safe me baby",
+                partnerNote: "Rest your mind knowing he is peaceful, safe, and watching over you."
+            },
+            {
+                id: 9,
+                theme: "Always Here",
+                text: "Always here for u me likkle poop",
+                partnerNote: "Time and space will never break the bond you two share."
+            },
+            {
+                id: 10,
+                theme: "Calm Guidance",
+                text: "Don't stress yourself man, you got this",
+                partnerNote: "Take a deep breath whenever things feel heavy. He believes in you."
+            }
+        ];
+
+        /* ===================================================================
+           2. SPECIFIC PHRASE MATCHING (BROTHER'S EXACT RESPONSES)
+           =================================================================== */
+        const EXACT_MATCH_RULES = [
+            {
+                triggers: ["are you safe", "you safe", "is he safe", "hope you safe"],
+                response: "Yeah mn me safe me baby"
+            },
+            {
+                triggers: ["bothering me", "shell dung", "protect me", "someone is bothering", "threat", "scared", "protect"],
+                response: "Make sure you okay enuh cause you know me we shell dung e place Fi u"
+            },
+            {
+                triggers: ["foreign", "foreigng", "headache", "hard day in foreign", "overseas", "headache in foreign"],
+                response: "Girl your in Foriengg what kind of headache you feeling in forieghn"
+            },
+            {
+                triggers: ["strength", "christ", "strengthens", "weak", "i need strength", "can't do this"],
+                response: "You'll be fine you can do all things through Christ who strengthens you"
+            },
+            {
+                triggers: ["love you", "thanks", "thank you", "love u", "lil sis", "love you bro"],
+                response: "Thanks love u lil sis"
+            },
+            {
+                triggers: ["pretty", "not pretty", "feel ugly", "pretty sister", "miss my face"],
+                response: "Me pretty sister"
+            },
+            {
+                triggers: ["bye", "likkle poop", "goodnight", "see you later", "talk later", "bye for now"],
+                response: "Alright me likkle poop"
+            },
+            {
+                triggers: ["worried", "make sure your safe", "worried about being safe", "stay safe", "are you okay"],
+                response: "You'll be okay just make sure your safe"
+            }
+        ];
+
+        function generateBrotherResponse(userText) {
+            const lower = userText.toLowerCase().trim();
+            
+            for (let rule of EXACT_MATCH_RULES) {
+                if (rule.triggers.some(t => lower.includes(t))) {
+                    return rule.response;
+                }
+            }
+            
+            const defaultQuotes = [
+                "Yeah mn me safe me baby",
+                "You'll be okay just make sure your safe",
+                "Alright me likkle poop",
+                "You'll be fine you can do all things through Christ who strengthens you",
+                "Me pretty sister",
+                "Make sure you okay enuh cause you know me we shell dung e place Fi u"
+            ];
+            
+            return defaultQuotes[Math.floor(Math.random() * defaultQuotes.length)];
+        }
+
+        function selectQuickPhrase(phraseText) {
+            const input = document.getElementById('journal-input');
+            input.value = phraseText;
+            saveJournalEntry();
+        }
+
+        /* ===================================================================
+           3. CANVAS WITH BIRDS, TULIPS, & CONSTELLATION GRAPHICS
+           =================================================================== */
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let stars = [];
+        let birds = [];
+        let constellationNodes = [];
+        let hoveredStar = null;
+        let animationFrame;
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initBackgroundStars();
+            initBackgroundBirds();
+            initConstellationNodes();
+        }
+
+        // Background Ambient Twinkling Stars
+        function initBackgroundStars() {
+            stars = [];
+            const count = Math.floor((width * height) / 3200);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    radius: Math.random() * 1.5,
+                    alpha: Math.random(),
+                    speed: 0.003 + Math.random() * 0.008,
+                    dir: Math.random() > 0.5 ? 1 : -1
+                });
+            }
+        }
+
+        // Background Soaring Birds
+        function initBackgroundBirds() {
+            birds = [];
+            const birdCount = 6;
+            for (let i = 0; i < birdCount; i++) {
+                birds.push({
+                    x: Math.random() * width,
+                    y: Math.random() * (height * 0.6),
+                    speed: 0.3 + Math.random() * 0.4,
+                    wingState: Math.random() * Math.PI * 2,
+                    wingSpeed: 0.05 + Math.random() * 0.03,
+                    size: 8 + Math.random() * 8,
+                    alpha: 0.25 + Math.random() * 0.35
+                });
+            }
+        }
+
+        // Layout the 10 Memory Nodes in an artistic curve
+        function initConstellationNodes() {
+            constellationNodes = [];
+            
+            const layoutCoordinates = [
+                { x: 0.20, y: 0.25 },
+                { x: 0.35, y: 0.20 },
+                { x: 0.50, y: 0.28 },
+                { x: 0.68, y: 0.22 },
+                { x: 0.82, y: 0.32 },
+                { x: 0.15, y: 0.65 },
+                { x: 0.32, y: 0.75 },
+                { x: 0.52, y: 0.68 },
+                { x: 0.70, y: 0.78 },
+                { x: 0.85, y: 0.65 }
+            ];
+
+            MEMORY_MESSAGES.forEach((msg, idx) => {
+                const pos = layoutCoordinates[idx] || { x: Math.random() * 0.8 + 0.1, y: Math.random() * 0.8 + 0.1 };
+                constellationNodes.push({
+                    id: msg.id,
+                    data: msg,
+                    x: pos.x * width,
+                    y: pos.y * height,
+                    baseRadius: 5,
+                    currentRadius: 5,
+                    pulse: Math.random() * Math.PI * 2,
+                    glowAlpha: 0.5,
+                    isBirdNode: idx % 2 === 1 // Alternate between star and bird icon
+                });
+            });
+        }
+
+        // Helper function to draw a bird silhouette on canvas
+        function drawBirdSilhouette(x, y, size, wingAngle, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+
+            const wingY = Math.sin(wingAngle) * (size * 0.6);
+
+            // Left wing
+            ctx.moveTo(-size, wingY);
+            ctx.quadraticCurveTo(-size * 0.4, -size * 0.3, 0, 0);
+
+            // Right wing
+            ctx.quadraticCurveTo(size * 0.4, -size * 0.3, size, wingY);
+
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // Helper function to draw a delicate tulip motif on canvas
+        function drawTulipIcon(x, y, size, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.fillStyle = color;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+
+            // Tulip Petals
+            ctx.beginPath();
+            ctx.moveTo(0, -size);
+            ctx.quadraticCurveTo(-size * 0.8, -size * 0.2, -size * 0.5, size * 0.5);
+            ctx.quadraticCurveTo(0, size * 0.8, size * 0.5, size * 0.5);
+            ctx.quadraticCurveTo(size * 0.8, -size * 0.2, 0, -size);
+            ctx.fill();
+
+            // Stem
+            ctx.beginPath();
+            ctx.moveTo(0, size * 0.5);
+            ctx.lineTo(0, size * 1.2);
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        // Render Canvas Frame
+        function drawCanvas() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw Subtle Connecting Constellation Lines
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(138, 171, 116, 0.18)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 4]);
+
+            for (let i = 0; i < constellationNodes.length - 1; i++) {
+                if (i === 4) continue;
+                ctx.moveTo(constellationNodes[i].x, constellationNodes[i].y);
+                ctx.lineTo(constellationNodes[i + 1].x, constellationNodes[i + 1].y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Render Background Stars
+            stars.forEach(s => {
+                s.alpha += s.speed * s.dir;
+                if (s.alpha >= 1 || s.alpha <= 0.1) s.dir *= -1;
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(220, 240, 210, ${Math.max(0, s.alpha)})`;
+                ctx.fill();
+            });
+
+            // Render Flying Background Songbirds
+            birds.forEach(b => {
+                b.x += b.speed;
+                b.wingState += b.wingSpeed;
+                if (b.x > width + 30) {
+                    b.x = -30;
+                    b.y = Math.random() * (height * 0.6);
+                }
+                drawBirdSilhouette(b.x, b.y, b.size, b.wingState, `rgba(212, 225, 180, ${b.alpha})`);
+            });
+
+            // Render 10 Interactive Nodes (Stars & Birds)
+            constellationNodes.forEach(node => {
+                node.pulse += 0.02;
+                const isHovered = hoveredStar && hoveredStar.id === node.id;
+
+                // Outer Glowing Halo in Olive/Golden Light
+                const haloRadius = (node.baseRadius * 3) + Math.sin(node.pulse) * 3 + (isHovered ? 12 : 0);
+                const gradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, haloRadius);
+                gradient.addColorStop(0, isHovered ? 'rgba(234, 179, 8, 0.65)' : 'rgba(162, 196, 138, 0.4)');
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                ctx.beginPath();
+                ctx.arc(node.x, node.y, haloRadius, 0, Math.PI * 2);
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                if (node.isBirdNode) {
+                    // Render as Songbird Node
+                    const birdColor = isHovered ? '#fef08a' : '#d9f99d';
+                    drawBirdSilhouette(node.x, node.y, isHovered ? 12 : 9, node.pulse * 2, birdColor);
+                } else {
+                    // Core Bright Star / Tulip Node
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, isHovered ? node.baseRadius + 3 : node.baseRadius, 0, Math.PI * 2);
+                    ctx.fillStyle = isHovered ? '#ffffff' : '#fef08a';
+                    ctx.shadowColor = '#eab308';
+                    ctx.shadowBlur = isHovered ? 15 : 8;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                // Label preview on hover
+                if (isHovered) {
+                    ctx.font = '300 12px Inter, sans-serif';
+                    ctx.fillStyle = '#fef08a';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(node.data.theme, node.x, node.y - 18);
+                }
+            });
+
+            animationFrame = requestAnimationFrame(drawCanvas);
+        }
+
+        // Mouse Interactions
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let found = null;
+            constellationNodes.forEach(node => {
+                const dist = Math.hypot(node.x - mouseX, node.y - mouseY);
+                if (dist < 25) {
+                    found = node;
+                }
+            });
+
+            hoveredStar = found;
+            canvas.style.cursor = found ? 'pointer' : 'default';
+        });
+
+        canvas.addEventListener('click', (e) => {
+            if (hoveredStar) {
+                openModal(hoveredStar.data);
+                playChimeSound(440 + hoveredStar.id * 40);
+            }
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length > 0) {
+                const rect = canvas.getBoundingClientRect();
+                const touchX = e.touches[0].clientX - rect.left;
+                const touchY = e.touches[0].clientY - rect.top;
+
+                constellationNodes.forEach(node => {
+                    const dist = Math.hypot(node.x - touchX, node.y - touchY);
+                    if (dist < 30) {
+                        openModal(node.data);
+                        playChimeSound(440 + node.id * 40);
+                    }
+                });
+            }
+        });
+
+        /* ===================================================================
+           4. MODAL & TYPEWRITER LOGIC
+           =================================================================== */
+        let typewriterTimeout;
+
+        function openModal(msgData) {
+            const modal = document.getElementById('message-modal');
+            const modalCard = document.getElementById('modal-card');
+            const categoryEl = document.getElementById('modal-category');
+            const textEl = document.getElementById('modal-text');
+            const partnerNoteEl = document.getElementById('modal-partner-note');
+
+            categoryEl.textContent = msgData.theme || "Memory Star";
+            partnerNoteEl.textContent = msgData.partnerNote;
+            textEl.innerHTML = "";
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalCard.classList.remove('scale-95');
+                modalCard.classList.add('scale-100');
+            }, 10);
+
+            typewriterEffect(textEl, msgData.text, 0);
+        }
+
+        function typewriterEffect(element, text, index) {
+            clearTimeout(typewriterTimeout);
+            if (index < text.length) {
+                element.innerHTML = text.substring(0, index + 1) + '<span class="inline-block w-1.5 h-6 bg-amber-300 ml-1 animate-pulse"></span>';
+                typewriterTimeout = setTimeout(() => {
+                    typewriterEffect(element, text, index + 1);
+                }, 35);
+            } else {
+                element.innerHTML = text;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('message-modal');
+            const modalCard = document.getElementById('modal-card');
+
+            modal.classList.add('opacity-0');
+            modalCard.classList.remove('scale-100');
+            modalCard.classList.add('scale-95');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                clearTimeout(typewriterTimeout);
+            }, 400);
+        }
+
+        function triggerComfortMessage() {
+            const randomIndex = Math.floor(Math.random() * MEMORY_MESSAGES.length);
+            const selectedMessage = MEMORY_MESSAGES[randomIndex];
+            
+            playChimeSound(523.25);
+            openModal(selectedMessage);
+        }
+
+        /* ===================================================================
+           5. WEB AUDIO API SYNTHESIS
+           =================================================================== */
+        let audioCtx = null;
+        let rainNode = null, windNode = null;
+        let rainGain = null, windGain = null, chimeGain = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+
+                chimeGain = audioCtx.createGain();
+                chimeGain.gain.value = 0.2;
+                chimeGain.connect(audioCtx.destination);
+
+                createRainSynthesizer();
+                createWindSynthesizer();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function createRainSynthesizer() {
+            const bufferSize = audioCtx.sampleRate * 2;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            
+            let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+            for (let i = 0; i < bufferSize; i++) {
+                let white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                output[i] *= 0.015;
+                b6 = white * 0.115926;
+            }
+
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 1000;
+
+            rainGain = audioCtx.createGain();
+            rainGain.gain.value = 0;
+
+            whiteNoise.connect(filter);
+            filter.connect(rainGain);
+            rainGain.connect(audioCtx.destination);
+            whiteNoise.start();
+        }
+
+        function createWindSynthesizer() {
+            const bufferSize = audioCtx.sampleRate * 2;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 300;
+            filter.Q.value = 3.0;
+
+            const lfo = audioCtx.createOscillator();
+            lfo.frequency.value = 0.15;
+            const lfoGain = audioCtx.createGain();
+            lfoGain.gain.value = 150;
+
+            lfo.connect(lfoGain);
+            lfoGain.connect(filter.frequency);
+            lfo.start();
+
+            windGain = audioCtx.createGain();
+            windGain.gain.value = 0;
+
+            whiteNoise.connect(filter);
+            filter.connect(windGain);
+            windGain.connect(audioCtx.destination);
+            whiteNoise.start();
+        }
+
+        function playChimeSound(freq = 520) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const noteGain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            noteGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.5);
+
+            osc.connect(noteGain);
+            noteGain.connect(chimeGain);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2.5);
+        }
+
+        function toggleAudioMenu() {
+            initAudio();
+            const menu = document.getElementById('audio-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function updateVolume(type, val) {
+            initAudio();
+            const volume = parseFloat(val);
+            if (type === 'rain' && rainGain) rainGain.gain.value = volume * 0.4;
+            if (type === 'wind' && windGain) windGain.gain.value = volume * 0.5;
+            if (type === 'chime' && chimeGain) chimeGain.gain.value = volume * 0.3;
+        }
+
+        /* ===================================================================
+           6. PRIVATE LOCALSTORAGE WRITE-BACK JOURNAL
+           =================================================================== */
+        function toggleJournal() {
+            const modal = document.getElementById('journal-modal');
+            const isHidden = modal.classList.contains('hidden');
+
+            if (isHidden) {
+                loadJournalEntries();
+                modal.classList.remove('hidden');
+                setTimeout(() => modal.classList.remove('opacity-0'), 10);
+            } else {
+                modal.classList.add('opacity-0');
+                setTimeout(() => modal.classList.add('hidden'), 300);
+            }
+        }
+
+        function saveJournalEntry() {
+            const input = document.getElementById('journal-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            playChimeSound(600);
+
+            if (constellationNodes.length > 0) {
+                const randomNode = constellationNodes[Math.floor(Math.random() * constellationNodes.length)];
+                randomNode.pulse = Math.PI * 2;
+            }
+
+            const replyText = generateBrotherResponse(text);
+
+            const entries = JSON.parse(localStorage.getItem('whisper_journal_entries') || '[]');
+            const newEntry = {
+                id: Date.now(),
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+                userText: text,
+                replyText: replyText
+            };
+
+            entries.unshift(newEntry);
+            localStorage.setItem('whisper_journal_entries', JSON.stringify(entries));
+            input.value = '';
+
+            renderJournalWithTyping(entries);
+        }
+
+        function renderJournalWithTyping(entries) {
+            loadJournalEntries(true);
+
+            setTimeout(() => {
+                loadJournalEntries(false);
+                playChimeSound(523.25);
+            }, 1200);
+        }
+
+        function loadJournalEntries(isTyping = false) {
+            const container = document.getElementById('journal-entries');
+            const entries = JSON.parse(localStorage.getItem('whisper_journal_entries') || '[]');
+
+            if (entries.length === 0 && !isTyping) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-emerald-300/50 italic text-xs">
+                        No messages sent yet. Tap one of the thought buttons above or write a message to hear his voice.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = entries.map((e, idx) => {
+                const showTypingForThis = (idx === 0 && isTyping);
+                
+                return `
+                <div class="space-y-2 mb-4">
+                    <div class="text-[10px] text-emerald-300/40 text-center my-1">${e.date}</div>
+                    
+                    <!-- Her Message -->
+                    <div class="flex justify-end">
+                        <div class="bg-amber-500/15 border border-amber-400/30 text-emerald-50 p-3 rounded-2xl rounded-tr-none max-w-[85%] text-xs font-light shadow-md">
+                            <p class="whitespace-pre-wrap">${escapeHtml(e.userText)}</p>
+                        </div>
+                    </div>
+
+                    <!-- His Exact Response -->
+                    <div class="flex justify-start items-start space-x-2">
+                        <div class="w-6 h-6 rounded-full bg-emerald-800/40 border border-emerald-500/40 flex items-center justify-center shrink-0 mt-1">
+                            <i data-lucide="sparkles" class="w-3 h-3 text-amber-300"></i>
+                        </div>
+                        <div class="glass-card border border-emerald-500/30 text-emerald-100 p-3 rounded-2xl rounded-tl-none max-w-[85%] text-xs italic font-serif-custom text-sm leading-relaxed shadow-lg">
+                            ${showTypingForThis ? `
+                                <div class="flex items-center space-x-1.5 py-1">
+                                    <span class="w-1.5 h-1.5 bg-amber-300 rounded-full animate-bounce"></span>
+                                    <span class="w-1.5 h-1.5 bg-amber-300 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                                    <span class="w-1.5 h-1.5 bg-amber-300 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                                </div>
+                            ` : `
+                                <p>${escapeHtml(e.replyText)}</p>
+                            `}
+                        </div>
+                        ${!showTypingForThis ? `
+                        <button onclick="deleteJournalEntry(${e.id})" class="text-emerald-500/40 hover:text-red-400 p-1 self-center">
+                            <i data-lucide="trash-2" class="w-3 h-3"></i>
+                        </button>` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+            container.scrollTop = 0;
+        }
+
+        function deleteJournalEntry(id) {
+            let entries = JSON.parse(localStorage.getItem('whisper_journal_entries') || '[]');
+            entries = entries.filter(e => e.id !== id);
+            localStorage.setItem('whisper_journal_entries', JSON.stringify(entries));
+            loadJournalEntries();
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        /* ===================================================================
+           7. INITIALIZATION
+           =================================================================== */
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            drawCanvas();
+            lucide.createIcons();
+        });
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+        });
+    </script>
+</body>
+</html>
+```
