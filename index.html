@@ -443,7 +443,7 @@
   </div>
 
   <script>
-    /* DATA CONFIGURATION */
+    /* DATA CONFIGURATION WITH YOUR EXACT AUDIO FILES */
     const BROTHER_MESSAGES = [
       { quote: "You'll be okay just make sure your safe", note: "Always keeping you protected." },
       { quote: "Make sure you okay enuh cause you know me we shell dung e place Fi u", note: "He's always in your corner, ready to fight for you." },
@@ -464,9 +464,9 @@
     ];
 
     const VOICE_NOTES = [
-      { trigger: ['miss your voice', 'voice note', 'listen', 'hear you'], url: 'audio/voice1.mp3', title: 'Voice Note: Me pretty sister' },
-      { trigger: ['shell dung', 'bothering', 'protect'], url: 'audio/voice2.mp3', title: 'Voice Note: Shell dung e place' },
-      { trigger: ['safe', 'are you safe'], url: 'audio/voice3.mp3', title: 'Voice Note: Yeah mn me safe' }
+      { trigger: ['miss your voice', 'voice note', 'listen', 'hear you'], url: 'audio/AUD-20261105-WA0029.opus', title: 'Voice Note From Him' },
+      { trigger: ['shell dung', 'bothering', 'protect'], url: 'audio/AUD-20260516-WA0000.opus', title: 'Voice Note From Him' },
+      { trigger: ['safe', 'are you safe'], url: 'audio/AUD-20261105-WA0030.opus', title: 'Voice Note From Him' }
     ];
 
     /* AUDIO SYNTHESIS FOR CHIMES */
@@ -671,7 +671,7 @@
       document.getElementById('audioTitle').innerText = voiceObj.title;
       audio.src = voiceObj.url;
       card.classList.add('active');
-      audio.play().catch(() => {}); // Auto-play if browser allows
+      audio.play().catch(() => {});
     }
 
     /* PHOTO MODAL LOGIC */
